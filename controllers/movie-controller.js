@@ -1,5 +1,7 @@
 import Movie from "../models/Movie.js";
 import jwt from "jsonwebtoken";
+import Admin from "../models/Admin.js";
+import mongoose from "mongoose";
 
 export const addMovie = async(req,res,next)=>{
     const extractedToken = req.headers.authorization.split(" ")[1];
@@ -27,6 +29,7 @@ export const addMovie = async(req,res,next)=>{
     }
 
     let movie;
+    // new movie instance created
     try{
         movie = new Movie({
             title, 
@@ -37,8 +40,17 @@ export const addMovie = async(req,res,next)=>{
             actors,
             admin: adminId 
         });
-        movie = await Movie.save();
-
+        //session for movie storing
+        const session = await mongoose.startSession();
+        const adminUser = await Admin.findById(adminId);
+        //we start a transaction, in which single transaction these records will be saved
+        session.statTransaction();
+        //first we save the movie
+        await movie.save({session});
+        adminUser.addedMovies.push(movie);
+        //then we save the admin user as well
+        await adminUser.save({session});
+        await session.commitTransaction();
     }catch(err){
         console.log(err);
     }
