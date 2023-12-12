@@ -5,18 +5,20 @@ import userRouter from './routes/user-routes.js';
 import adminRouter from "./routes/admin-routes.js";
 import movieRouter from "./routes/movie-routes.js";
 import bookingRouter from "./routes/booking-routes.js";
+import errorHandler from "./errorHandler.js";
 
 dotenv.config();
 
 const app = express();
+app.use(errorHandler);
 
 
-async function main() {
-  // await mongoose.connect(`mongodb+srv://ankushrana9458:${process.env.MONGODB_PWD}@cluster0.38osesy.mongodb.net/?retryWrites=true&w=majority`);
-  await mongoose.connect('mongodb://localhost:27017')
-  console.log("database connected");
-}
-main().catch((err) => console.log(err));
+// async function main() {
+//   await mongoose.connect(`mongodb+srv://ankushrana9458:${process.env.MONGODB_PWD}@cluster0.38osesy.mongodb.net/?retryWrites=true&w=majority`);
+//   // await mongoose.connect('mongodb://localhost:27017')
+//   console.log("database connected");
+// }
+// main().catch((err) => console.log(err));
 
 //middlewares
 app.use(express.json());
@@ -40,9 +42,18 @@ app.use("/booking", bookingRouter);
 // )
 
 
-app.listen(5000, () => {
-    console.log("connected to database and server running on port 5000")
-});
+// app.listen(5000, () => {
+//     console.log("connected to database and server running on port 5000")
+// });
 
-
+mongoose
+  .connect(
+    `mongodb+srv://ankushrana9458:${process.env.MONGODB_PWD}@cluster0.38osesy.mongodb.net/?retryWrites=true&w=majority`
+  )
+  .then(() =>
+    app.listen(5000, () =>
+      console.log("Connected To Database And Server is running")
+    )
+  )
+  .catch((e) => console.log(e));
 
