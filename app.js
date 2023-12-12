@@ -10,7 +10,7 @@ import errorHandler from "./errorHandler.js";
 dotenv.config();
 
 const app = express();
-app.use(errorHandler);
+
 
 
 // async function main() {
@@ -22,6 +22,7 @@ app.use(errorHandler);
 
 //middlewares
 app.use(express.json());
+app.use(errorHandler);
 // app.get("/", (req, res) => {
 //     res.send('OK')
 // })

@@ -75,7 +75,7 @@ export const getAllMovies = async(req,res,next)=>{
     try{
         movies = await Movie.find();
     }catch(err){
-        console.log(err);
+        next(err);
     }
 
     if(!movies){
@@ -90,7 +90,7 @@ export const getMovieById = async(req,res,next)=>{
     try{
         movie = await Movie.findById(id);
     }catch(err){
-        console.log(err);
+        next(err);
     }
     if(!movie){
         res.status(404).json({message:"Invalid Movie"});
