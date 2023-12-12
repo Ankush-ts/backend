@@ -45,5 +45,31 @@ export const newBooking=async(req,res,next)=>{
     if(!booking){
         res.status(500).json({message:"unable to create booking"})
     }
-    res.status(201).json(booking)
+    res.status(201).json({booking})
 }
+export const getBookingById = async(req,res,next)=>{
+    const id =req.params.id;
+    let booking;
+    try{
+        booking =await Bookings.findById(id);
+    }catch(err){
+        next(err)
+    }
+    if(!booking){
+        res.status(500).json({message : "no booking found"})
+    }
+    res.status(200).json({booking});
+}
+
+export const getBooking = async (req, res, next) => {
+    let bookings;
+    try {
+      bookings = await Bookings.find();
+    } catch (err) {
+      return console.log(err);
+    }
+    if (!bookings) {
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
+    return res.status(200).json({ bookings });
+  };
