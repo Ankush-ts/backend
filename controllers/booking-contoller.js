@@ -73,3 +73,25 @@ export const getBooking = async (req, res, next) => {
     }
     return res.status(200).json({ bookings });
   };
+
+  export const deleteBooking = async(req,res,next)=>{
+    const id =req.params.id;
+    let booking;
+    try{
+        booking= await Bookings.findByIdAndDelete(id).populate("user movie");
+        const session = await mongoose.startSession();
+        session.startTransaction();
+        await booking.user.bookings.pull(booking);
+        await booking.movie.bookings.pull(booking);
+        await booking.movie.save({session});
+        await booking.user.save({session});
+        session.commitTransation();
+
+    }catch(err){
+        next(err)
+    }
+    if (!booking) {
+        return res.status(500).json({ message: "No booking found by this id" });
+      }
+      return res.status(200).json({ message: "Successfully Deleted" });
+  }
