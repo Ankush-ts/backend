@@ -97,3 +97,32 @@ export const getMovieById = async(req,res,next)=>{
     }
     res.status(200).json({movie});
 };
+
+// export const updateMovieById = async(req,res,next)=>{
+//     const id = req.params.id;
+//     let movie;
+//         //validation
+//         for (const key in movie) {
+//             if (key=="title" || key=="description" || key=="postureUrl" || key=="actors" || key=="id" || key=="featured") {
+//                 continue;
+//             }
+//             else{
+//                 res.status(400).json({message:"BadRequest. Data is not in format"})
+//             }
+//         }
+//         try{
+            
+//             movie.splice(Movie.findIndex(e=>e.id===id));
+//             Movie.push(movie);
+//         }catch(err){
+//             next(err);
+//         }
+//         if(!movie){
+//             res.status(404).json({message:"Invalid Movie"});
+//         }
+//         res.status(200).json({movie});
+        
+    
+    
+
+// }

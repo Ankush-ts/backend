@@ -6,6 +6,7 @@ import adminRouter from "./routes/admin-routes.js";
 import movieRouter from "./routes/movie-routes.js";
 import bookingRouter from "./routes/booking-routes.js";
 import errorHandler from "./errorHandler.js";
+import cors from "cors";
 
 dotenv.config();
 
@@ -21,6 +22,7 @@ const app = express();
 // main().catch((err) => console.log(err));
 
 //middlewares
+app.use(cors({origin: "*"}));
 app.use(express.json());
 app.use(errorHandler);
 // app.get("/", (req, res) => {

@@ -14,9 +14,9 @@ export const getAllUsers = async (req, res, next) => {
     }
 
     if (!users) {
-        res.status(500).json({ message: "Unexpected Error Occured" });
+        return res.status(500).json({ message: "Unexpected Error Occured" });
     }
-    res.status(200).json({ users });
+     return res.status(200).json({ users });
 };
 
 //endpoint2 post
@@ -28,7 +28,7 @@ export const signup = async (req, res, next) => {
         !name || name.trim() === "" &&
         !email || email.trim === "" &&
         !password || password.trim === "") {
-        res.status(422).json({ message: "Invalid Inputs" })
+        return res.status(422).json({ message: "Invalid Inputs" })
     }
 
     const hashedPasword = bcrypt.hashSync(password);
@@ -45,7 +45,7 @@ export const signup = async (req, res, next) => {
     if (!user) {
         return res.status(500).json({ message: "Unexpected Error Occured" });
     }
-    res.status(201).json(user);
+    return res.status(201).json({id: user._id});
 };
 
 //endpoint3 put
@@ -58,7 +58,7 @@ export const updateUser = async(req,res,next)=>{
         !name || name.trim() === "" &&
         !email || email.trim === "" &&
         !password || password.trim === "") {
-        res.status(422).json({ message: "Invalid Inputs" })
+        return res.status(422).json({ message: "Invalid Inputs" })
     }
 
     const hashedPassword = bcrypt.hashSync(password);
@@ -76,27 +76,24 @@ export const updateUser = async(req,res,next)=>{
     if (!user) {
         return res.status(500).json({ message: "Something went wrong" });
     }
-    res.status(200).json({message: "updated Succesfully"});
+   return res.status(200).json({message: "updated Succesfully"});
 
 }
 
 //endpoint4, delete
-export const deleteUser = async(req,res)=>{
+export const deleteUser = async (req, res, next) => {
     const id = req.params.id;
+    let user;
     try {
-      const result = await User.deleteOne({ _id: id });
-      if (result.deletedCount === 1) {
-        res.status(200).send({ msg: "Deleted successfully." });
-      } else {
-        res
-          .status(204)
-          .send({ msg: "User not found or not deleted." });
-      }
+      user = await User.findByIdAndRemove(id);
     } catch (err) {
-      res.status(400).send("Error While Deleting the user", err.message);
-      console.log(err);
+      next(err);
     }
-}
+    if (!user) {
+      return res.status(500).json({ message: "Something went wrong" });
+    }
+    return res.status(200).json({ message: "Deleted Successfully" });
+  };
 
 //endpoint5, login/post
 export const login =async (req,res,next)=>{
@@ -113,13 +110,18 @@ export const login =async (req,res,next)=>{
         existingUser =await User.findOne({email})
     }
     catch(err){
-        return console.log(err);
+        next(err);
     }
+    if (!existingUser) {
+        return res
+          .status(404)
+          .json({ message: "Unable to find user from this ID" });
+      }
     const isPasswordCorrect=bcrypt.compareSync(password, existingUser.password )
     if(!isPasswordCorrect){
         return res.status(400).json({message: "Incorrect password"})
     }
-    return res.status(200).json({message: "Login Succesfull"})
+    return res.status(200).json({message: "Login Succesfull", id: existingUser._id})
 }
 
 export const getBookingsOfUsers= async(req,res,next)=>{
@@ -133,5 +135,19 @@ export const getBookingsOfUsers= async(req,res,next)=>{
     if(!bookings){
         res.status(500).json({message: "No booking found"})
     }
-    res.status(200).json({bookings});
+    return res.status(200).json({bookings});
 }
+
+export const getUserById = async (req, res, next) => {
+    const id = req.params.id;
+    let user;
+    try {
+      user = await User.findById(id);
+    } catch (err) {
+      next(err);
+    }
+    if (!user) {
+      return res.status(500).json({ message: "Unexpected Error Occured" });
+    }
+    return res.status(200).json({ user });
+  };
