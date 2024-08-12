@@ -7,6 +7,7 @@ import movieRouter from "./routes/movie-routes.js";
 import bookingRouter from "./routes/booking-routes.js";
 import errorHandler from "./errorHandler.js";
 import cors from "cors";
+import dbConnection from "./connector/connector.js";
 
 dotenv.config();
 
@@ -22,7 +23,7 @@ const app = express();
 // main().catch((err) => console.log(err));
 
 //middlewares
-app.use(cors({origin: "*"}));
+app.use(cors());
 app.use(express.json());
 app.use(errorHandler);
 // app.get("/", (req, res) => {
@@ -54,9 +55,19 @@ mongoose
     `mongodb+srv://ankushrana9458:${process.env.MONGODB_PWD}@cluster0.38osesy.mongodb.net/?retryWrites=true&w=majority`
   )
   .then(() =>
-    app.listen(5000, () =>
+    app.listen(process.env.PORT, () =>
       console.log("Connected To Database And Server is running")
     )
   )
   .catch((e) => console.log(e));
+  // app.listen(process.env.PORT, async () => {
+  //   try {
+  //     await dbConnection();
+  //     console.log("Connected to database successfully");
+  //   } catch (error) {
+  //     console.log("Not connected to database", error);
+  //     console.log("Something went wrong while connecting to database");
+  //   }
+  //   console.log(`server is running at ${process.env.PORT}`);
+  // });
 

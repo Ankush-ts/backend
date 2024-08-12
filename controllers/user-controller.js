@@ -124,27 +124,30 @@ export const login =async (req,res,next)=>{
     return res.status(200).json({message: "Login Succesfull", id: existingUser._id})
 }
 
-export const getBookingsOfUsers= async(req,res,next)=>{
-    const id=req.params.id;
+export const getBookingsOfUser = async (req, res, next) => {
+    const id = req.params.id;
     let bookings;
-    try{
-        bookings = await Bookings.find({user: id})
-    }catch(err){
-        next(err)
+    try {
+      bookings = await Bookings.find({ user: id })
+        .populate("movie")
+        .populate("user");
+    } catch (err) {
+      return console.log(err);
     }
-    if(!bookings){
-        res.status(500).json({message: "No booking found"})
+    if (!bookings) {
+      return res.status(500).json({ message: "Unable to get Bookings" });
     }
-    return res.status(200).json({bookings});
-}
+    return res.status(200).json({ bookings });
+  };
 
-export const getUserById = async (req, res, next) => {
+  
+  export const getUserById = async (req, res, next) => {
     const id = req.params.id;
     let user;
     try {
       user = await User.findById(id);
     } catch (err) {
-      next(err);
+      return console.log(err);
     }
     if (!user) {
       return res.status(500).json({ message: "Unexpected Error Occured" });
